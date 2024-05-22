@@ -2,6 +2,7 @@ package jp.techacademy.tomotaka.aruga.apiapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.viewpager2.widget.ViewPager2
@@ -122,5 +123,15 @@ class MainActivity : AppCompatActivity(), FragmentCallback {
     companion object {
         private const val VIEW_PAGER_POSITION_API = 0
         private const val VIEW_PAGER_POSITION_FAVORITE = 1
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (viewPagerAdapter.fragments[VIEW_PAGER_POSITION_API] as ApiFragment).updateView()
+        try {
+            (viewPagerAdapter.fragments[VIEW_PAGER_POSITION_FAVORITE] as FavoriteFragment).updateData()
+        }catch (e: NullPointerException){
+            Log.d("aaa","Nullだから仕方ねぇー")
+        }
     }
 }

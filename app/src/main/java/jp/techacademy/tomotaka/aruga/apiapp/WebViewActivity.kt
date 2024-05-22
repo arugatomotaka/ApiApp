@@ -35,13 +35,36 @@ class WebViewActivity : AppCompatActivity() {
 
         binding.webView.loadUrl(intent.getStringExtra(KEY_URL).toString())
 
-//        var shop = Shop(
-//            couponUrls,
-//            intent.getStringExtra(KEY_id)!!,
-//            intent.getStringExtra(Key_image)!!,
-//            intent.getStringExtra(Key_name)!!,
-//            intent.getStringExtra(Key_address)!!
-//        )
+
+//        binding.favoriteImageView.apply {
+//            // お気に入り状態を取得
+//            val isFavorite = FavoriteShop.findBy(shop.id) != null
+//
+//            // 白抜きの星を設定→星の色の処理
+//            setImageResource(if (isFavorite) R.drawable.ic_star else R.drawable.ic_star_border)
+//
+//            // 星をタップした時の処理
+//            setOnClickListener {
+//                if (isFavorite) {
+//                    dialogokornot(shop.id)
+//
+//                    //todo onResumeを実装し、星の状態を変更する処理を加える
+//                    //todo setImageResourceを用いればできそう！！→ここで行う処理じゃない
+////                    setImageResource(R.drawable.ic_star_border)
+//
+//                } else {
+//                    tourokusyori(shop)
+//                    setImageResource(R.drawable.ic_star)
+//                }
+//            }
+//        }
+
+        favoriteProcess(shop)
+
+    }
+
+
+    private fun favoriteProcess(shop:Shop){
 
         binding.favoriteImageView.apply {
             // お気に入り状態を取得
@@ -53,16 +76,14 @@ class WebViewActivity : AppCompatActivity() {
             // 星をタップした時の処理
             setOnClickListener {
                 if (isFavorite) {
-                    dialogokornot(shop.id)
-
+                    dialogokornot(shop)
+//                   setImageResource(R.drawable.ic_star_border)
                 } else {
                     tourokusyori(shop)
+//                    setImageResource(R.drawable.ic_star)
                 }
-
-
             }
         }
-
 
     }
 
@@ -82,12 +103,15 @@ class WebViewActivity : AppCompatActivity() {
 
     }
 
-    private fun dialogokornot(id:String){
+    private fun dialogokornot(shop: Shop){
         AlertDialog.Builder(this)
             .setTitle(R.string.delete_favorite_dialog_title)
             .setMessage(R.string.delete_favorite_dialog_message)
             .setPositiveButton(android.R.string.ok) { _, _ ->
-                deletefavorite(id)}.setNegativeButton(android.R.string.cancel) { _, _ -> }
+                deletefavorite(shop.id)
+                favoriteProcess(shop)
+            }
+            .setNegativeButton(android.R.string.cancel) { _, _ -> }
             .create()
             .show()
     }
@@ -100,6 +124,7 @@ class WebViewActivity : AppCompatActivity() {
             url = shop.couponUrls.sp.ifEmpty { shop.couponUrls.pc }
             address = shop.address
         })
+        favoriteProcess(shop)
     }
 
 
@@ -110,7 +135,7 @@ class WebViewActivity : AppCompatActivity() {
         private const val Key_address = "address"
         private const val Key_name = "name"
 
-        fun start(activity: Activity, url: String, id: String, image: String, address: String,name: String) {
+        fun start(activity: Activity, url: String, id: String, image: String, address: String, name: String) {
 
             activity.startActivity(
                 Intent(activity, WebViewActivity::class.java)
